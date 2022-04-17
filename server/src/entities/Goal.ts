@@ -18,7 +18,9 @@ export default class Goal extends BaseEntity {
   @ManyToOne(() => Goal, (goal) => goal.goals)
   parentGoal!: Goal;
 
-  @OneToMany(() => Goal, (goal) => goal.parentGoal)
+  @OneToMany(() => Goal, (goal) => goal.parentGoal, {
+    onDelete: 'CASCADE'
+  })
   goals!: Goal[];
 
   toJson(): GoalJSON {

@@ -86,4 +86,30 @@ UserRouter.post('/category/create', async (req, res) => {
   return res.status(200).send({ message: `Successfully created category, ${name}` });
 });
 
+UserRouter.post('/category/delete', async (req, res) => {
+  const userId = req.userId;
+  const { id } = req.body;
+
+  const user = await User.findOne({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) return res.status(404).send({ error: 'Invalid user. ' });
+
+  const category = await Category.findOne({
+    where: {
+      id
+    }
+  });
+
+  category?.remove(); 
+
+  await user.save();
+  await category.save();
+
+  return res.status(200).send({ message: `Successfully created category, ${name}` });
+}); 
+
 export default UserRouter;

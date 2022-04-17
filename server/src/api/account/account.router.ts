@@ -34,7 +34,7 @@ AccountRouter.post('/login', async (req, res) => {
       username,
     },
   });
-  if (!user || user.password !== password) return res.status(401).send({ error: 'Invalid user. ' });
+  if (!user || user.password !== password) return res.status(404).send({ error: 'Invalid user. ' });
 
   const existingToken = tokens.getTokenByID(user.id);
 
@@ -44,10 +44,12 @@ AccountRouter.post('/login', async (req, res) => {
     return;
   }
 
-  const token = crypto.randomUUID();
+  const token = Math.random().toString(36).substr(2); 
 
   tokens.add(token, user.id);
   res.cookie('session', token);
+  console.log(token);
+  
   res.end();
 });
 

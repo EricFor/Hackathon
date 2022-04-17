@@ -26,28 +26,6 @@ export default function HomePage(props) {
       >
         Lifestyles
       </button>
-
-      <button
-        className='btn btn-primary'
-        onClick={() => navigate('./shop')}
-        style={{
-          background: 'white',
-          color: 'black',
-        }}
-      >
-        Shop
-      </button>
-
-      <button
-        className='btn btn-primary'
-        onClick={() => navigate('./adventure')}
-        style={{
-          background: 'white',
-          color: 'black',
-        }}
-      >
-        Set Forth on Your Adventure!
-      </button>
     </div>
   );
 }

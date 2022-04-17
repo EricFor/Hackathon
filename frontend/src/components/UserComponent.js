@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 function getLoginAndSignupCSS() {
   return {
-    backgroundColor: 'white',
-    color: 'black',
+    // backgroundColor: 'white',
+    // color: 'black',
     border: 'none',
   };
 }
@@ -29,7 +29,7 @@ export default function UserComponent(props) {
       ) : (
         <>
           <button
-            className='form-button btn btn-primary m-2'
+            className='btn btn-primary m-2'
             style={getLoginAndSignupCSS()}
             onClick={() => navigate('/login')}
           >

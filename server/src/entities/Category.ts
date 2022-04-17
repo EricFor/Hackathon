@@ -13,7 +13,9 @@ export default class Category extends BaseEntity {
   @Column()
   name!: string;
 
-  @OneToMany(() => Goal, (goal) => goal.parentCategory)
+  @OneToMany(() => Goal, (goal) => goal.parentCategory, {
+    onDelete: 'CASCADE'
+  })
   goals!: Goal[];
 
   toJson() {
