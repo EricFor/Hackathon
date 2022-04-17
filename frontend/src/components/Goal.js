@@ -1,41 +1,45 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import { Card, Button, Modal, Form, Alert } from 'react-bootstrap';
-import { useState } from 'react';
 import '../css/FlexboxGrid.css';
-import { useNavigate } from 'react-router-dom';
+import '../css/HoverTransparency.css';
+import { Card } from 'react-bootstrap';
+import { useEffect } from 'react';
+import { Form, Button, Alert, Modal } from 'react-bootstrap';
+import { useParams, useNavigate } from 'react-router-dom';
 import usePageContext from '../global/hooks/usePageContext';
 
-function LifeStyle() {
-  const [categories, setCategories] = useState([]);
+export default function Goal() {
+  const { id } = useParams();
+  const [description, setDescription] = useState();
+  const [subGoals, setSubgoals] = useState([]);
 
   const navigate = useNavigate();
 
   const [page, setPage] = usePageContext();
 
-  const onCategoryUpdate = () => {
+  const onGoalUpdate = () => {
     axios
-      .get('http://localhost:8000/api/user/categories')
+      .get(`http://localhost:8000/api/user/goal?goalId=${id}`)
       .then((res) => {
         const data = res.data;
-        console.log(data);
-        setCategories(data);
+        setPage(data.name);
+        setDescription(data.description);
+        setSubgoals(data.goals);
       })
-      .catch((err) => {});
+      .catch(() => navigate('/lifestyle'));
   };
 
   useEffect(() => {
-    setPage('Lifestyle');
-    onCategoryUpdate();
+    onGoalUpdate();
   }, [navigate]);
 
   return (
     <div>
-      <CreateCategory onCategoryUpdate={onCategoryUpdate} />
+      <CreateGoal onGoalUpdate={onGoalUpdate} goalId={id} />
       <div style={{ overflow: 'auto', height: '100vh' }}>
         <div className='flexbox'>
-          {categories.map((elem, i) => (
-            <Category key={i} name={elem.name} categoryId={elem.id} onDelete={onCategoryUpdate} />
+          {subGoals.map((e, i) => (
+            <Subgoal key={i} name={e.name} goalId={e.id} description={e.description} onDelete={onGoalUpdate} />
           ))}
         </div>
       </div>
@@ -43,16 +47,13 @@ function LifeStyle() {
   );
 }
 
-function Category(props) {
-  // props.name
-  // props.categoryId --> /lifestyle/category/${props.categoryId}
-
+function Subgoal(props) {
   const navigate = useNavigate();
 
   const onDelete = () => {
     axios
-      .post('http://localhost:8000/api/user/category/delete', {
-        id: props.categoryId,
+      .post('http://localhost:8000/api/user/category/removeGoal', {
+        goalId: props.goalId,
       })
       .then(() => {
         if (props.onDelete) props.onDelete();
@@ -64,8 +65,9 @@ function Category(props) {
 
   return (
     <Card style={{ width: '15rem', margin: 30, minWidth: '100px', minHeight: '150px' }}>
-      <Card.Body style={{ cursor: 'pointer' }} onClick={() => navigate(`/lifestyle/category/${props.categoryId}`)}>
+      <Card.Body style={{ cursor: 'pointer' }} onClick={() => navigate(`/lifestyle/goals/${props.goalId}`)}>
         <Card.Title>{props.name}</Card.Title>
+        <Card.Text>{props.description}</Card.Text>
       </Card.Body>
       <Card.Footer>
         <Button variant='danger' onClick={onDelete}>
@@ -76,9 +78,10 @@ function Category(props) {
   );
 }
 
-function CreateCategory(props) {
+function CreateGoal(props) {
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState('');
+  const [desc, setDesc] = useState('');
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -87,22 +90,24 @@ function CreateCategory(props) {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (title === '') return setError('Please specify a category name. ');
+    if (title === '') return setError('Please specify a subgoal name. ');
     // now the title gets posted to server side?
     // bro how do i get the data ??
     // complete the url
     await axios
-      .post('http://localhost:8000/api/user/category/create', {
+      .post('http://localhost:8000/api/user/goals/createSubgoal', {
         name: title,
+        description: desc,
+        goalId: props.goalId,
       })
       .then(() => {
         handleClose(); // nice
-        setError('');
         setTitle('');
-        if (props.onCategoryUpdate) props.onCategoryUpdate();
+        setDesc('');
+        setError('');
+        if (props.onGoalUpdate) props.onGoalUpdate();
       })
       .catch((err) => {
-        console.log(err);
         setError('An error occurred. ');
       });
   };
@@ -112,30 +117,32 @@ function CreateCategory(props) {
       <Button
         style={{
           position: 'fixed',
-          left: '10px',
-          bottom: '10px',
+          left: '50px',
+          bottom: '40px',
           backgroundColor: 'green',
           border: 'none',
           zIndex: 1000,
+          fontSize: 25,
+          width: 130,
+          height: 130,
+          borderRadius: '50%',
         }}
         variant='primary'
         onClick={handleShow}
+        className='transparencyHover'
       >
-        Create Category
+        Create Goal
       </Button>
 
       <Modal show={show} onHide={handleClose}>
         <form onSubmit={onSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title>Create your Category</Modal.Title>
+            <Modal.Title>Create your Subgoal</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form.Control
-              type='text'
-              autoFocus
-              placeholder='Category Name'
-              onChange={(e) => setTitle(e.target.value)}
-            />
+            <Form.Control type='text' autoFocus placeholder='Subgoal Name' onChange={(e) => setTitle(e.target.value)} />
+            <br />
+            <Form.Control type='text' placeholder='Subgoal Description' onChange={(e) => setDesc(e.target.value)} />
           </Modal.Body>
           {error !== '' ? <Alert variant='danger'>{error}</Alert> : <></>}
           <Modal.Footer>
@@ -151,5 +158,3 @@ function CreateCategory(props) {
     </>
   );
 }
-
-export default LifeStyle;

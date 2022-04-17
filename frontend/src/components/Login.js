@@ -2,13 +2,21 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import hash from 'hash.js';
 import { useNavigate } from 'react-router-dom';
+import { Form, Button, Alert } from 'react-bootstrap';
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  const [warning, setWarning] = useState('');
+
   const onSubmit = async (e) => {
+    if (username === '' || password === '') {
+      setWarning('Make sure all fields are completed!');
+      return;
+    }
+
     e.preventDefault();
     await axios.post('http://localhost:8000/api/account/login', {
       username: username,
@@ -18,23 +26,45 @@ function Login() {
   };
 
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <input
-          onChange={(e) => {
-            setUsername(e.target.value);
+    <div
+      style={{
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        display: 'flex',
+      }}
+    >
+      <form
+        onSubmit={onSubmit}
+        style={{
+          backgroundColor: 'gray',
+          padding: 30,
+        }}
+      >
+        <h1 style={{ color: 'white' }}>Login</h1>
+        <Form.Control
+          style={{
+            maxWidth: '25vw',
           }}
-          placeholder='Username'
           type='text'
+          autoFocus
+          placeholder='Username'
+          onChange={(e) => setUsername(e.target.value)}
         />
-        <input
-          onChange={(e) => {
-            setPassword(e.target.value);
+        <br />
+        <Form.Control
+          style={{
+            maxWidth: '25vw',
           }}
-          placeholder='Password'
           type='password'
+          placeholder='Password'
+          onChange={(e) => setPassword(e.target.value)}
         />
-        <input type='submit' />
+        <br />
+        {warning !== '' ? <Alert variant='danger'>{warning}</Alert> : <></>}
+        <Button variant='primary' onClick={onSubmit}>
+          Submit
+        </Button>
       </form>
     </div>
   );

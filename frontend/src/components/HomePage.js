@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Card } from 'react-bootstrap';
 import UserComponent from './UserComponent';
-
 export default function HomePage(props) {
   const navigate = useNavigate();
 
@@ -14,40 +14,48 @@ export default function HomePage(props) {
         className='btn btn-primary'
         onClick={() => navigate('/lifestyle')}
         style={{
-          height: 150,
-          width: 200,
-          borderRadius: 50,
+          height: 120,
+          width: 250,
           background: 'white',
           border: 'none',
           marginTop: 30,
           marginLeft: 30,
           color: 'black',
+          fontSize: 35,
         }}
       >
         Lifestyles
       </button>
 
-      <button
-        className='btn btn-primary'
-        onClick={() => navigate('./shop')}
+      <h1
         style={{
-          background: 'white',
-          color: 'black',
+          textAlign: 'center',
+          color: 'white',
+          fontSize: 50,
+          marginLeft: 350,
+          zIndex: 1,
         }}
       >
-        Shop
-      </button>
+        Welcome to Quest! <br /> The Goal Keeping Site.
+      </h1>
 
-      <button
-        className='btn btn-primary'
-        onClick={() => navigate('./adventure')}
+      <Card
         style={{
-          background: 'white',
-          color: 'black',
+          marginLeft: 30,
+          marginTop: 30,
+          maxWidth: 300,
+          minHeight: 350,
+          // maxHeight: 380,
         }}
       >
-        Set Forth on Your Adventure!
-      </button>
+        <Card.Body>
+          <Card.Title style={{ fontSize: 23 }}>Shortcuts</Card.Title>
+          <Card.Text>
+            There was not enough time to add shortcuts, but this is supposed to a place where your most recent places
+            are saved - links to them
+          </Card.Text>
+        </Card.Body>
+      </Card>
     </div>
   );
 }

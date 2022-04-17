@@ -12,10 +12,14 @@ export default class Goal extends BaseEntity {
   @Column()
   description!: string;
 
-  @ManyToOne(() => Category, (category) => category.goals)
+  @ManyToOne(() => Category, (category) => category.goals, {
+    onDelete: 'CASCADE',
+  })
   parentCategory!: Category;
 
-  @ManyToOne(() => Goal, (goal) => goal.goals)
+  @ManyToOne(() => Goal, (goal) => goal.goals, {
+    onDelete: 'CASCADE',
+  })
   parentGoal!: Goal;
 
   @OneToMany(() => Goal, (goal) => goal.parentGoal)
