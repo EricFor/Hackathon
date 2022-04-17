@@ -14,8 +14,8 @@ Our project is a website made with React and Express. Our idea for this site was
 
 # Setup Directions:
 
-## Prerequisites: 
-1. Node.js
+### Prerequisites: 
+    Node.js
 
 1. Clone the git repository
 
