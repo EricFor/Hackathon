@@ -1,45 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import hash from 'hash.js'; 
+import hash from 'hash.js';
+import { useNavigate } from 'react-router-dom';
 
-class Login extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-    state = {
-        username: "",
-        password: "",
-    }
+function Login() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-    submit() {
-        axios.post("http://localhost:8000/api/account/login", {
-            username: this.state.username,
-            password: hash.sha256().update(this.state.password).digest('hex'),
-        });  // where should the data go
-    }
-    
-    render() { 
-        return (
-            <form onSubmit={this.submit}>
-                <input onChange={(e) => {
-                    this.setState({
-                        username: e.target.value
-                    }); 
-                }}
-                placeholder="Username"
-                type="text"
-                />
-                <input onChange={(e) => {
-                    this.setState({
-                        password: e.target.value
-                    }); 
-                }}
-                placeholder="Password"
-                type="password" />
-                <input type="submit" />
-            </form>
-        );
-    }
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    await axios.post('http://localhost:8000/api/account/login', {
+      username: username,
+      password: hash.sha256().update(password).digest('hex'),
+    });
+    navigate('/lifestyle');
+  };
+
+  return (
+    <div>
+      <form onSubmit={onSubmit}>
+        <input
+          onChange={(e) => {
+            setUsername(e.target.value);
+          }}
+          placeholder='Username'
+          type='text'
+        />
+        <input
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
+          placeholder='Password'
+          type='password'
+        />
+        <input type='submit' />
+      </form>
+    </div>
+  );
 }
- 
+
 export default Login;
